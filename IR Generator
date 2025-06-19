@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Iran Military Twitter Post Generator</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             font-family: 'TwitterChirp', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -14,6 +15,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
         }
         
         .container {
@@ -54,6 +56,7 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 10px;
+            transition: background-color 0.2s;
         }
         
         button:hover {
@@ -77,7 +80,6 @@
         
         .tweet {
             padding: 15px;
-            transform-origin: top left;
         }
         
         .tweet-header {
@@ -252,8 +254,25 @@
             gap: 8px;
             margin-top: 8px;
         }
+
+        @media (max-width: 640px) {
+            .tweet-container {
+                width: 100%;
+                height: auto;
+                min-height: 280px;
+            }
+            
+            .tweet-footer {
+                position: relative;
+                bottom: auto;
+                margin-top: 20px;
+            }
+            
+            .bio {
+                margin-left: 0;
+            }
+        }
     </style>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div class="container">
