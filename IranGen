@@ -1,0 +1,406 @@
+import { useState } from 'react'
+import styles from '../styles/globals.css'
+
+export default function TweetGenerator() {
+  const [tweetText, setTweetText] = useState('')
+  const [showOutput, setShowOutput] = useState(false)
+  const [stats, setStats] = useState({
+    replies: '26K',
+    reposts: '45K',
+    likes: '179K',
+    bookmarks: '15K',
+    views: '106.6M'
+  })
+
+  const formatNumber = (num) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
+    if (num >= 1000) return (num / 1000).toFixed(0) + 'K'
+    return num.toString()
+  }
+
+  const getRandomStats = () => {
+    return {
+      replies: Math.floor(Math.random() * 30000) + 10000,
+      reposts: Math.floor(Math.random() * 50000) + 20000,
+      likes: Math.floor(Math.random() * 200000) + 100000,
+      bookmarks: Math.floor(Math.random() * 20000) + 10000,
+      views: Math.floor(Math.random() * 90000000) + 10000000
+    }
+  }
+
+  const formatTimestamp = (date) => {
+    const options = { hour: 'numeric', minute: '2-digit', hour12: true }
+    const time = date.toLocaleString('en-US', options)
+    const month = date.toLocaleString('en-US', { month: 'short' })
+    const day = date.getDate()
+    const year = date.getFullYear()
+    return `${time} · ${month} ${day}, ${year}`
+  }
+
+  const handleGenerate = () => {
+    if (!tweetText.trim()) {
+      alert('Please enter some text for your tweet')
+      return
+    }
+
+    const newStats = getRandomStats()
+    setStats({
+      replies: formatNumber(newStats.replies),
+      reposts: formatNumber(newStats.reposts),
+      likes: formatNumber(newStats.likes),
+      bookmarks: formatNumber(newStats.bookmarks),
+      views: formatNumber(newStats.views) + ' Views'
+    })
+    setShowOutput(true)
+  }
+
+  const handleDownload = async () => {
+    const html2canvas = (await import('html2canvas')).default
+    const tweetContainer = document.getElementById('tweet-container')
+    
+    html2canvas(tweetContainer, {
+      backgroundColor: '#000000',
+      scale: 2,
+      logging: false,
+      useCORS: true
+    }).then(canvas => {
+      const link = document.createElement('a')
+      link.download = 'iran-military-tweet.png'
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    })
+  }
+
+  return (
+    <div className="container">
+      <h1>Daily Iran Military Twitter Post Generator</h1>
+      
+      <div className="input-area">
+        <textarea 
+          id="tweet-text" 
+          placeholder="Enter the content for your Daily Iran Military Twitter post..."
+          value={tweetText}
+          onChange={(e) => setTweetText(e.target.value)}
+        />
+        <p className="instructions">Type your message above and click "Generate Tweet" to create a Daily Iran Military Twitter post.</p>
+        <button id="generate-btn" onClick={handleGenerate}>Generate Tweet</button>
+      </div>
+      
+      <div className={`output-area ${showOutput ? '' : 'hidden'}`} id="output-area">
+        <div className="tweet-container" id="tweet-container">
+          <div className="tweet">
+            <div className="tweet-header">
+              <div className="profile-pic">
+                <img src="/flag.png" alt="Iran Flag" />
+              </div>
+              <div className="user-info">
+                <div className="name-verified">
+                  <span className="name">Daily Iran Military</span>
+                  <span className="material-icons verified">verified</span>
+                </div>
+                <div className="username">@IRIran_Military</div>
+              </div>
+            </div>
+            <div className="bio">Commentary account</div>
+            <div className="tweet-content" id="generated-content">
+              {tweetText}
+            </div>
+            <div className="timestamp" id="tweet-timestamp">
+              {formatTimestamp(new Date())}
+            </div>
+            <div className="views-count" id="views-count">
+              {stats.views}
+            </div>
+            <div className="tweet-footer">
+              <div className="tweet-stats">
+                <div className="tweet-stat" id="replies-stat">
+                  <i className="material-icons" style={{fontSize:'16px',marginRight:'5px'}}>chat_bubble_outline</i> 
+                  <span>{stats.replies}</span>
+                </div>
+                <div className="tweet-stat" id="reposts-stat">
+                  <i className="material-icons" style={{fontSize:'16px',marginRight:'5px'}}>repeat</i> 
+                  <span>{stats.reposts}</span>
+                </div>
+                <div className="tweet-stat" id="likes-stat">
+                  <i className="material-icons" style={{fontSize:'16px',marginRight:'5px'}}>favorite_border</i> 
+                  <span>{stats.likes}</span>
+                </div>
+                <div className="tweet-stat" id="bookmarks-stat">
+                  <i className="material-icons" style={{fontSize:'16px',marginRight:'5px'}}>bookmark_border</i> 
+                  <span>{stats.bookmarks}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button className="download-btn" id="download-btn" onClick={handleDownload}>
+          Download Image
+        </button>
+      </div>
+
+      <div className="alpha-notice">
+        <p>⚡ Alpha Preview - Features may change ⚡</p>
+        <div className="support-line">
+          <span>Developed by <a href="https://x.com/reecenxtdoor" className="twitter-link" target="_blank" rel="noopener noreferrer">@reecenxtdoor</a></span>
+          <span>•</span>
+          <a href="https://www.buymeacoffee.com/reecenem" className="coffee-link" target="_blank" rel="noopener noreferrer">
+            <svg className="coffee-icon" viewBox="0 0 24 24" fill="#FFDD00">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3-9h6v2H9z"/>
+            </svg>
+            Buy Me a Coffee
+          </a>
+        </div>
+      </div>
+
+      <style jsx global>{`
+        body {
+          font-family: 'TwitterChirp', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          background-color: #15202b;
+          color: #e7e9ea;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-height: 100vh;
+        }
+        
+        .container {
+          width: 100%;
+          max-width: 800px;
+          flex: 1;
+        }
+        
+        h1 {
+          color: #e7e9ea;
+          text-align: center;
+          margin-bottom: 30px;
+        }
+        
+        .input-area {
+          margin-bottom: 30px;
+        }
+        
+        textarea {
+          width: 100%;
+          padding: 15px;
+          border-radius: 8px;
+          border: 1px solid #38444d;
+          background-color: #192734;
+          color: #e7e9ea;
+          font-size: 16px;
+          min-height: 120px;
+          resize: vertical;
+        }
+        
+        button {
+          background-color: #1d9bf0;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 20px;
+          font-weight: bold;
+          cursor: pointer;
+          font-size: 16px;
+          margin-top: 10px;
+        }
+        
+        button:hover {
+          background-color: #1a8cd8;
+        }
+        
+        .output-area {
+          position: relative;
+          margin-top: 30px;
+        }
+        
+        .tweet-container {
+          width: 600px;
+          height: 280px;
+          overflow: hidden;
+          border-radius: 12px;
+          border: 1px solid #2f3336;
+          background-color: #000000;
+          position: relative;
+        }
+        
+        .tweet {
+          padding: 15px;
+          transform-origin: top left;
+        }
+        
+        .tweet-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 5px;
+        }
+        
+        .profile-pic {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          margin-right: 12px;
+          background-color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        
+        .profile-pic img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .user-info {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .name-verified {
+          display: flex;
+          align-items: center;
+        }
+        
+        .name {
+          font-weight: bold;
+          margin-right: 5px;
+        }
+        
+        .verified {
+          color: #1d9bf0;
+          font-size: 18px;
+        }
+        
+        .username {
+          color: #71767b;
+          font-size: 15px;
+        }
+        
+        .bio {
+          color: #71767b;
+          font-size: 15px;
+          margin: 5px 0 10px 60px;
+          font-style: italic;
+        }
+        
+        .tweet-content {
+          font-size: 15px;
+          line-height: 1.5;
+          margin-bottom: 10px;
+          white-space: pre-line;
+          color: #e7e9ea;
+        }
+        
+        .timestamp {
+          color: #71767b;
+          font-size: 15px;
+          margin-bottom: 15px;
+        }
+        
+        .views-count {
+          color: #71767b;
+          font-size: 15px;
+          font-weight: bold;
+          margin-bottom: 15px;
+          display: flex;
+          align-items: center;
+        }
+        
+        .views-count::before {
+          content: "·";
+          margin: 0 5px;
+        }
+        
+        .tweet-footer {
+          display: flex;
+          color: #71767b;
+          font-size: 13px;
+          position: absolute;
+          bottom: 15px;
+          width: calc(100% - 30px);
+          border-top: 1px solid #2f3336;
+          padding-top: 15px;
+        }
+        
+        .tweet-stats {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+        }
+        
+        .tweet-stat {
+          display: flex;
+          align-items: center;
+        }
+        
+        .download-btn {
+          margin-top: 15px;
+          background-color: #1d9bf0;
+        }
+        
+        .hidden {
+          display: none;
+        }
+        
+        .instructions {
+          color: #8b98a5;
+          font-size: 14px;
+          margin-top: 5px;
+        }
+
+        .alpha-notice {
+          color: #8b98a5;
+          font-size: 13px;
+          text-align: center;
+          margin-top: 40px;
+          padding: 15px;
+          border-top: 1px solid #2f3336;
+          width: 100%;
+          line-height: 1.6;
+        }
+        
+        .twitter-link {
+          color: #1d9bf0;
+          text-decoration: none;
+          font-weight: bold;
+        }
+        
+        .twitter-link:hover {
+          text-decoration: underline;
+        }
+        
+        .coffee-link {
+          color: #FFDD00;
+          text-decoration: none;
+          font-weight: bold;
+          display: inline-flex;
+          align-items: center;
+          transition: opacity 0.2s;
+          margin-left: 5px;
+        }
+        
+        .coffee-link:hover {
+          opacity: 0.8;
+          text-decoration: none;
+        }
+        
+        .coffee-icon {
+          width: 18px;
+          height: 18px;
+          margin-right: 6px;
+          vertical-align: middle;
+        }
+        
+        .support-line {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 8px;
+        }
+      `}</style>
+    </div>
+  )
+}
